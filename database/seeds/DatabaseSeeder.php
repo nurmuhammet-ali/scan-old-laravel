@@ -1,6 +1,8 @@
 <?php
 
+use App\{Plan, Type};
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -11,6 +13,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // $this->call(UsersTableSeeder::class);
+        $types = ['a', 'b', 'c', 'a-2018', 'b-2018', 'c-2018'];
+        foreach ($types as $type) {
+            Type::create(['name' => $type]);
+        }
+
+        $plans = ['hostings', 'vps'];
+        foreach ($plans as $plan) {
+            Plan::create(['name' => $plan]);
+        }
+        DB::table('tests_completed')->insert(['count' => 0]);
+        $this->call(UsersTableSeeder::class);
     }
 }

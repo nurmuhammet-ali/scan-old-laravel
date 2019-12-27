@@ -20,6 +20,7 @@ class CreateResultsTable extends Migration
             $table->text('redirect_count')->nullable();
             $table->text('total_time')->nullable();
             $table->text('primary_ip')->nullable();
+            $table->text('error')->nullable();
             $table->text('cms')->nullable();
             $table->timestamps();
         });
