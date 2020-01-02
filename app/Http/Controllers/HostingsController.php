@@ -39,7 +39,8 @@ class HostingsController extends Controller
             'responsible_employee_home_number' => 'required',
             'responsible_employee_job_number' => 'required',
             'contract_at' => 'required', 'associated_at' => 'required',
-            'number_noted' => 'required', 'more' => 'required'
+            'number_noted' => 'required', 'more' => 'required',
+            'domain_name' => 'unique:hostings,domain_name'
         ]);
 
         if ($request->domain_name) {

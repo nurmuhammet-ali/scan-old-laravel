@@ -31,6 +31,9 @@ Route::middleware('auth')->group(function () {
     Route::post('plans/update', 'PlansController@update')->name('plans.update');
     Route::post('plans/destroy', 'PlansController@destroy')->name('plans.delete');
 
+    // Just for me
+    Route::get('try', 'OldHomeController@findItOut');
+
     // Hostings Routes... 💻
     Route::get('hostings/create', 'HostingsController@create')->name('hostings.create');
     Route::post('hostings', 'HostingsController@store')->name('hostings.store');

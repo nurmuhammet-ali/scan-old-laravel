@@ -3,6 +3,10 @@
 @section('styles')
 <link rel="stylesheet" href="/css/app.css">
 <script>
+    @if($makeTheSound)
+        let audio = new Audio('/success.mp3');
+        audio.play();
+    @endif
     window.theTimeOUT = setTimeout(function() {
         window.location.reload(true);
     }, 4000);

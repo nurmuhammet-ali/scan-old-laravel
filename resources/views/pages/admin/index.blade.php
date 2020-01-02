@@ -41,7 +41,7 @@
     <tbody>
         @foreach($hostings as $hosting)
             <tr>
-                <td>{{ $hosting->company_name }}</td>
+                <td>{{ $hosting->domain_name }}</td>
                 <td class="align">{{ $loop->iteration }}</td>
                 <td>{{ $hosting->phone_number }}</td>
                 <td>

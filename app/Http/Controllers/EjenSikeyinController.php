@@ -68,7 +68,14 @@ class EjenSikeyinController extends Controller
         // DB::table('tests_completed')->limit(1)->update(['count' => $okay]);
         DB::table('has_been')->limit(1)->update(['count' => $hosting->id]);
 
-        return view('pages.home')->with('results', Result::all());
+        $makeTheSound = false;
+        if ($test['data']['http_code'] != 200) {
+            $makeTheSound = true;
+        }
+        return view('pages.home', [
+            'results' => Result::all(),
+            'makeTheSound' => $makeTheSound
+        ]);
     }
 
     public function test($url = null) 
