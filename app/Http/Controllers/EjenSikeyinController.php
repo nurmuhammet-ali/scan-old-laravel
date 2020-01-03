@@ -29,8 +29,8 @@ class EjenSikeyinController extends Controller
             $hosting = Hosting::first();
         }
 
-        $test = $this->test($hosting->domain_name);
-
+        $test = $this->test($hosting->domain_name); 
+        
         $table = DB::table('results');
         $host = $table->where('hosting_id', $hosting->id);
         if ($host->first()) {
@@ -94,7 +94,7 @@ class EjenSikeyinController extends Controller
         curl_setopt($ch, CURLOPT_HEADER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
         curl_setopt($ch, CURLOPT_COOKIE, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, ['Request-By: TELECOMBOT']);
 

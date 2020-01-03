@@ -52,13 +52,13 @@
         <tbody>
             @foreach($results as $result)
                 @if($result->hosting != null)
-                <tr class="tr-{{ ($result->http_code >= '299' || $result->http_code == 0) ? 'not-' : ''}}working">
-                    <td class="{{ ($result->http_code >= '299' || $result->http_code == 0) ? 'not-' : ''}}working">
+                <tr class="tr-{{ ($result->http_code >= '400' || $result->http_code == 0) ? 'not-' : ''}}working">
+                    <td class="{{ ($result->http_code >= '400' || $result->http_code == 0) ? 'not-' : ''}}working">
                         <a href="http://{{ $result->hosting->domain_name }}" target="_blank">{{ $result->hosting->domain_name }}</a>
                     </td>
                     <td>{{ $result->primary_ip }}</td>
                     <td class="long-td">
-                        {{ $result->error ?: 'Error not found'  }}
+                        {{ $result->error ?: ''  }}
                     </td>
                     <td>{{ $result->cms /* ?? 'Не определён' */ }}</td>
                     <td>{{ $result->total_time }}</td>
