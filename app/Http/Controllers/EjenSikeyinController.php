@@ -29,7 +29,36 @@ class EjenSikeyinController extends Controller
             $hosting = Hosting::first();
         }
 
-        $test = $this->test($hosting->domain_name); 
+        // Grab fucking url
+        $url = $hosting->domain_name;
+
+        // Initialize fucking Curl
+        $ch = curl_init();
+
+        // Set fucking options
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_AUTOREFERER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_HEADER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        // curl_setopt($ch, CURLOPT_COOKIE, true);
+        // curl_setopt($ch, CURLOPT_HTTPHEADER, ['Request-By: TELECOMBOT']);
+
+        $html = curl_exec($ch);
+        $data = curl_getinfo($ch);
+        
+        $error = curl_error($ch);
+        
+        curl_close($ch);
+
+        $header = substr($html, 0, $data['header_size']);
+        $body = substr($html, $data['header_size']);
+
+        $header = mb_convert_encoding($header, 'UTF-8', 'UTF-8');
+        $body = mb_convert_encoding($body, 'UTF-8', 'UTF-8'); 
         
         $table = DB::table('results');
         $host = $table->where('hosting_id', $hosting->id);
@@ -38,23 +67,23 @@ class EjenSikeyinController extends Controller
             $tableToBeUpdated = DB::table('results')->where('hosting_id', $hosting->id);
             $tableToBeUpdated->update([
                 'hosting_id' => $hosting->id,
-                'http_code' => $test['data']['http_code'],
-                'redirect_count' => $test['data']['redirect_count'],
-                'total_time' => $test['data']['total_time'],
-                'primary_ip' => $test['data']['primary_ip'],
-                'cms' => $test['cms'],
-                'error' => $test['error'],
+                'http_code' => $data['http_code'],
+                'redirect_count' => $data['redirect_count'],
+                'total_time' => $data['total_time'],
+                'primary_ip' => $data['primary_ip'],
+                'cms' => 'Undetected',
+                'error' => $error,
                 'updated_at' => now()
             ]);
         } else {
             $table->insert([
                 'hosting_id' => $hosting->id,
-                'http_code' => $test['data']['http_code'],
-                'redirect_count' => $test['data']['redirect_count'],
-                'total_time' => $test['data']['total_time'],
-                'primary_ip' => $test['data']['primary_ip'],
-                'cms' => $test['cms'],
-                'error' => $test['error'],
+                'http_code' => $data['http_code'],
+                'redirect_count' => $data['redirect_count'],
+                'total_time' => $data['total_time'],
+                'primary_ip' => $data['primary_ip'],
+                'cms' => 'Undetected',
+                'error' => $error,
                 'created_at' => now(),
                 'updated_at' => now()
             ]);
@@ -69,7 +98,7 @@ class EjenSikeyinController extends Controller
         DB::table('has_been')->limit(1)->update(['count' => $hosting->id]);
 
         $makeTheSound = false;
-        if ($test['data']['http_code'] != 200) {
+        if ($data['http_code'] != 200) {
             $makeTheSound = true;
         }
         return view('pages.home', [
@@ -81,7 +110,7 @@ class EjenSikeyinController extends Controller
     public function test($url = null) 
     {
         // Grab fucking url
-        $url = $url ?: 'tia.gov.tm';
+        $url = $url ?: 'gujurlynesil.edu.tm';
 
         // Initialize fucking Curl
         $ch = curl_init();
@@ -107,7 +136,6 @@ class EjenSikeyinController extends Controller
 
         curl_close($ch);
 
-        // $data = mb_convert_encoding($data, 'UTF-8', 'UTF-8');
         $header = mb_convert_encoding($header, 'UTF-8', 'UTF-8');
         $body = mb_convert_encoding($body, 'UTF-8', 'UTF-8');
         
