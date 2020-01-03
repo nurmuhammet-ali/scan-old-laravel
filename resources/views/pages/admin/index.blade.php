@@ -49,7 +49,11 @@
                     {{ (new \Carbon\Carbon($hosting->letter_at))->format('d.m.Y') }}
                 </td>
                 <td>{{ $hosting->responsible_employee_name }}</td>
-                <td>{{ $hosting->plan()->name }} {{ $hosting->plan()->created_at->format('d.m.Y') }}</td>
+                <td>{{ 
+                    $hosting->plan() ? $hosting->plan()->name : ''
+                }} {{ 
+                    $hosting->plan() ? $hosting->plan()->showTime() : ''
+                }}</td>
                 <td class="actions">
                     <a href="{{ route('hostings.show', ['hosting' => $hosting->id]) }}">
                         <img src="/img/edit.png" alt="" width="16" height="16">

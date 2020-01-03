@@ -51,6 +51,7 @@
         </thead>
         <tbody>
             @foreach($results as $result)
+                @if($result->hosting != null)
                 <tr class="tr-{{ ($result->http_code >= '299' || $result->http_code == 0) ? 'not-' : ''}}working">
                     <td class="{{ ($result->http_code >= '299' || $result->http_code == 0) ? 'not-' : ''}}working">
                         <a href="http://{{ $result->hosting->domain_name }}" target="_blank">{{ $result->hosting->domain_name }}</a>
@@ -74,6 +75,7 @@
                         @endif
                     </td>
                 </tr>
+                @endif
             @endforeach
         </tbody>
     </table>

@@ -9,6 +9,9 @@ Route::match(['get', 'post'], '/register', 'EjenSikeyinController@register')->na
 // EjenSikeyinController... ⁉️
 Route::get('/', 'EjenSikeyinController@index')->name('home');
 
+Route::get('test', 'EjenSikeyinController@test');
+Route::get('try', 'OldHomeController@addHostings');
+
 // Tests Results Routes... 💹
 Route::get('hostings-test/{hosting}/show', 'EjenSikeyinController@show')->name('hostings_checked.show');
 
@@ -32,7 +35,7 @@ Route::middleware('auth')->group(function () {
     Route::post('plans/destroy', 'PlansController@destroy')->name('plans.delete');
 
     // Just for me
-    Route::get('try', 'OldHomeController@findItOut');
+    Route::get('find-it-out', 'OldHomeController@findItOut');
 
     // Hostings Routes... 💻
     Route::get('hostings/create', 'HostingsController@create')->name('hostings.create');

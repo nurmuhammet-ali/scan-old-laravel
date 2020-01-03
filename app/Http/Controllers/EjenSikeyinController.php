@@ -81,7 +81,7 @@ class EjenSikeyinController extends Controller
     public function test($url = null) 
     {
         // Grab fucking url
-        $url = $url ?: 'mlsp.gov.tm';
+        $url = $url ?: 'tia.gov.tm';
 
         // Initialize fucking Curl
         $ch = curl_init();
@@ -94,7 +94,7 @@ class EjenSikeyinController extends Controller
         curl_setopt($ch, CURLOPT_HEADER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 6);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
         curl_setopt($ch, CURLOPT_COOKIE, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, ['Request-By: TELECOMBOT']);
 
@@ -107,10 +107,10 @@ class EjenSikeyinController extends Controller
 
         curl_close($ch);
 
-        $data = mb_convert_encoding($data, 'UTF-8', 'UTF-8');
+        // $data = mb_convert_encoding($data, 'UTF-8', 'UTF-8');
         $header = mb_convert_encoding($header, 'UTF-8', 'UTF-8');
         $body = mb_convert_encoding($body, 'UTF-8', 'UTF-8');
-
+        
         return [
             'data' => $data,
             'header' => $header,
