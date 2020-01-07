@@ -9,8 +9,24 @@ Route::match(['get', 'post'], '/register', 'EjenSikeyinController@register')->na
 // EjenSikeyinController... ⁉️
 Route::get('/', 'EjenSikeyinController@index')->name('home');
 
+Route::get('try', function () {
+    Unirest\Request::timeout(10);
+    Unirest\Request::verifyPeer(false); // Disables SSL cert validation
+    Unirest\Request::verifyHost(false); // Disables SSL cert validation
+    Unirest\Request::curlOpt(CURLOPT_HTTPHEADER, ['Request-By: TELECOMBOT']);
+
+    $response = Unirest\Request::get('http://goshagumry.com.tm');
+
+    $status_code = mb_convert_encoding($response->code, 'UTF-8', 'UTF-8');
+    $headers = mb_convert_encoding($response->headers, 'UTF-8', 'UTF-8');
+    $body = mb_convert_encoding($response->body, 'UTF-8', 'UTF-8');
+
+    // alias for `curl_getinfo`
+    return [Unirest\Request::getInfo()['connect_time']];
+});
+
 Route::get('test', 'EjenSikeyinController@test');
-Route::get('try', 'OldHomeController@addHostings');
+// Route::get('try', 'OldHomeController@addHostings');
 
 // Tests Results Routes... 💹
 Route::get('hostings-test/{hosting}/show', 'EjenSikeyinController@show')->name('hostings_checked.show');

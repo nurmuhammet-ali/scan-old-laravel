@@ -29,37 +29,8 @@ class EjenSikeyinController extends Controller
             $hosting = Hosting::first();
         }
 
-        // Grab fucking url
-        $url = $hosting->domain_name;
+        $test = $this->test($hosting->domain_name);
 
-        // Initialize fucking Curl
-        $ch = curl_init();
-
-        // Set fucking options
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_AUTOREFERER, true);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_HEADER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-        // curl_setopt($ch, CURLOPT_COOKIE, true);
-        // curl_setopt($ch, CURLOPT_HTTPHEADER, ['Request-By: TELECOMBOT']);
-
-        $html = curl_exec($ch);
-        $data = curl_getinfo($ch);
-        
-        $error = curl_error($ch);
-        
-        curl_close($ch);
-
-        $header = substr($html, 0, $data['header_size']);
-        $body = substr($html, $data['header_size']);
-
-        $header = mb_convert_encoding($header, 'UTF-8', 'UTF-8');
-        $body = mb_convert_encoding($body, 'UTF-8', 'UTF-8'); 
-        
         $table = DB::table('results');
         $host = $table->where('hosting_id', $hosting->id);
         if ($host->first()) {
@@ -67,23 +38,23 @@ class EjenSikeyinController extends Controller
             $tableToBeUpdated = DB::table('results')->where('hosting_id', $hosting->id);
             $tableToBeUpdated->update([
                 'hosting_id' => $hosting->id,
-                'http_code' => $data['http_code'],
-                'redirect_count' => $data['redirect_count'],
-                'total_time' => $data['total_time'],
-                'primary_ip' => $data['primary_ip'],
+                'http_code' => $test['status_code'],
+                'redirect_count' => $test['info']['redirect_count'],
+                'total_time' => $test['info']['connect_time'],
+                'primary_ip' => $test['info']['primary_ip'],
                 'cms' => 'Undetected',
-                'error' => $error,
+                'error' => $test['error'],
                 'updated_at' => now()
             ]);
         } else {
             $table->insert([
                 'hosting_id' => $hosting->id,
-                'http_code' => $data['http_code'],
-                'redirect_count' => $data['redirect_count'],
-                'total_time' => $data['total_time'],
-                'primary_ip' => $data['primary_ip'],
+                'http_code' => $test['status_code'],
+                'redirect_count' => $test['info']['redirect_count'],
+                'total_time' => $test['info']['total_time'],
+                'primary_ip' => $test['info']['primary_ip'],
                 'cms' => 'Undetected',
-                'error' => $error,
+                'error' => $test['error'],
                 'created_at' => now(),
                 'updated_at' => now()
             ]);
@@ -97,53 +68,47 @@ class EjenSikeyinController extends Controller
         // DB::table('tests_completed')->limit(1)->update(['count' => $okay]);
         DB::table('has_been')->limit(1)->update(['count' => $hosting->id]);
 
-        $makeTheSound = false;
-        if ($data['http_code'] != 200) {
-            $makeTheSound = true;
-        }
         return view('pages.home', [
-            'results' => Result::all(),
-            'makeTheSound' => $makeTheSound
+            'results' => Result::all()
         ]);
     }
 
     public function test($url = null) 
     {
         // Grab fucking url
-        $url = $url ?: 'gujurlynesil.edu.tm';
+        $url = $url ?: 'bayramalytextilex.gov.tm';
 
-        // Initialize fucking Curl
-        $ch = curl_init();
+        \Unirest\Request::timeout(10);
+        \Unirest\Request::verifyPeer(false); // Disables SSL cert validation
+        \Unirest\Request::verifyHost(false); // Disables SSL cert validation
+        \Unirest\Request::curlOpt(CURLOPT_HTTPHEADER, ['Request-By: TELECOMBOT']);
 
-        // Set fucking options
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_AUTOREFERER, true);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_HEADER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-        curl_setopt($ch, CURLOPT_COOKIE, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Request-By: TELECOMBOT']);
-
-        $html = curl_exec($ch);
-        $data = curl_getinfo($ch);
+        $response = \Unirest\Request::get('http://'.$url);
+        $info = \Unirest\Request::getInfo();
         
-        $error = curl_error($ch);
-        $header = substr($html, 0, $data['header_size']);
-        $body = substr($html, $data['header_size']);
+        $info = $this->encode_items($info);
+        $headers = '';
+        $body = $this->encode_items($response->raw_body);
+        $error = '';
+        $status_code = $response->code;
 
-        curl_close($ch);
+        if (Str::contains($body, 'Account disabled by server administrator')) {
+            $status_code = 403;    
+            $error = 'Account disabled by server administrator';  
+        } elseif ((Str::contains($body, 'ISPsystem') || Str::contains($body, 'ISPmanager')) && Str::contains($body, 'Real content coming soon.')) {
+            $status_code = 403;    
+            $error = 'Acccount not used by user';
+        } elseif (Str::contains($body, 'Apache2 Ubuntu Default Page')) {
+            $status_code = 403;    
+            $error = 'Acccount not used by user';
+        }
 
-        $header = mb_convert_encoding($header, 'UTF-8', 'UTF-8');
-        $body = mb_convert_encoding($body, 'UTF-8', 'UTF-8');
-        
         return [
-            'data' => $data,
-            'header' => $header,
+            'status_code' => $status_code,
+            'headers' => $headers,
             'body' => $body,
-            'error' => (Str::contains($body, 'Account disabled by server administrator')) ? 'Account disabled by server administrator' : $error,
+            'info' => $info,
+            'error' => $error,
             'cms' => 'Undetected'
         ];
     }
@@ -160,6 +125,25 @@ class EjenSikeyinController extends Controller
             'hosting' => $hosting,
             'test' => Result::where('hosting_id', $hosting->id)->first()
         ]);
+    }
+
+    public function encode_items($array)
+    {
+        if (is_string($array) || is_int($array)) {
+            return mb_convert_encoding($array, 'UTF-8', 'UTF-8');
+        }
+        
+        if (is_array($array)) {
+            foreach($array as $key => $value) {
+                if(is_array($value)) {
+                    $array[$key] = $this->encode_items($value);
+                } else {
+                    $array[$key] = mb_convert_encoding($value, 'UTF-8', 'UTF-8');
+                }
+            }   
+        }
+
+        return $array;
     }
 
     /**

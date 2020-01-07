@@ -264,9 +264,6 @@ class TestsController extends Controller implements ShouldQueue
             }
         }
 
-        $header = substr($theRET, 0, $info['header_size']);
-        $body = substr($theRET, $info['header_size']);
-
         // CMS Detector
         $cms = new \DetectCMS\DetectCMS($domain);
 

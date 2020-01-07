@@ -22,10 +22,11 @@
 </a>
 <div class="h-4"></div>
 @if(count($hostings) > 0)
+<h3 style="margin-left: 20px;">Jemi websahypa: {{ count($hostings->all()) }}</h3>
     <table class="container" id="table">
     <thead>
         <tr>
-            <th><h1>Edaraň ady</h1></th>
+            <th><h1>Edaraň websahypasy</h1></th>
             <th><h1>Web sahypa / VPS №</h1></th>
             <th><h1>Habarlaşmak üçin telefon belgileri</h1></th>
             <th><h1>Edaranyň haty we senesi</h1></th>
