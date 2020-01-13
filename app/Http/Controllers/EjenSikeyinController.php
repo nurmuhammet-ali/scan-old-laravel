@@ -67,9 +67,15 @@ class EjenSikeyinController extends Controller
         
         // DB::table('tests_completed')->limit(1)->update(['count' => $okay]);
         DB::table('has_been')->limit(1)->update(['count' => $hosting->id]);
-
+        $hostingToBeChecked = $hosting->next();
+        if (!$hostingToBeChecked ) {
+            $hostingToBeChecked = Hosting::first();
+        }
+        
         return view('pages.home', [
-            'results' => Result::all()
+            'results' => Result::all(),
+            'hostingChecked' => $hosting,
+            'hostingToBeChecked' => $hostingToBeChecked
         ]);
     }
 

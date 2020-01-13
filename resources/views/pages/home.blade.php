@@ -25,6 +25,9 @@
 <h1 class="info"><span class="common working"></span></h1>
 <h1 class="info"><span class="common not-working"></span></h1>
 <h1 class="info"><span class="common"></span></h1>
+@if($hostingToBeChecked->domain_name)
+  <h2 style="font-size: 20px;">Şu wagt: {{ $hostingToBeChecked->domain_name }} barnalylýar</h2>
+@endif
 @if(count($results) > 0)
     <table class="container" id="table">
         <thead>
