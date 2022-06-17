@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
+    protected $counter = 0;
+
     /**
      * Display a listing of the resource.
      *

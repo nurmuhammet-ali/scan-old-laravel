@@ -82,7 +82,7 @@ class EjenSikeyinController extends Controller
     public function test($url = null) 
     {
         // Grab fucking url
-        $url = $url ?: 'bayramalytextilex.gov.tm';
+        $url = $url ?: 'gujurlynesil.edu.tm';
 
         \Unirest\Request::timeout(10);
         \Unirest\Request::verifyPeer(false); // Disables SSL cert validation

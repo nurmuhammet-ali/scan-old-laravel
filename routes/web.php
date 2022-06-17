@@ -10,6 +10,15 @@ Route::match(['get', 'post'], '/register', 'EjenSikeyinController@register')->na
 Route::get('/', 'EjenSikeyinController@index')->name('home');
 
 Route::get('test', 'EjenSikeyinController@test');
+Route::get('hello', function () {
+    \Unirest\Request::timeout(10);
+    \Unirest\Request::verifyPeer(false); // Disables SSL cert validation
+    \Unirest\Request::verifyHost(false); // Disables SSL cert validation
+
+    $response = \Unirest\Request::get('http://dalasgar.test');
+    
+    return [$response->raw_body];
+});
 
 // Tests Results Routes... 💹
 Route::get('hostings-test/{hosting}/show', 'EjenSikeyinController@show')->name('hostings_checked.show');
